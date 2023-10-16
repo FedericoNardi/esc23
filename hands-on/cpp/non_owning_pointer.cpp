@@ -19,4 +19,8 @@ int main()
 char* some_api() {
   static char s[] = "Hello, world!";
   return std::strstr(s, "orl");
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 25bab66d796f94a93ae42057eeaafb2d14be179c

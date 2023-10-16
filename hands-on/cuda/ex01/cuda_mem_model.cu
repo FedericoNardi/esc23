@@ -10,7 +10,12 @@
 #include "cuda_check.h"
 
 // Here you can set the device ID that was assigned to you
-#define MYDEVICE 0
+#define MYDEVICE 2
+
+// define CUDA kernel
+__global__ void myKernel()
+{
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Program main
@@ -39,26 +44,28 @@ int main()
 
   // Part 1 of 5: allocate the device memory
   size_t memSize = dimA * sizeof(float);
-  CUDA_CHECK(cudaMallocAsync(___));
-  CUDA_CHECK(cudaMallocAsync(___));
+
+  CUDA_CHECK(cudaMallocAsync(&d_a, memSize, queue));
+  CUDA_CHECK(cudaMallocAsync(&d_b, memSize, queue));
+  
 
   // Part 2 of 5: host to device memory copy
   // Hint: the raw pointer to the underlying array of a vector
   // can be obtained by calling std::vector<T>::data()
-  CUDA_CHECK(cudaMemcpyAsync(___));
+  CUDA_CHECK(cudaMemcpyAsync(d_a, h_a.data(), memSize, cudaMemcpyHostToDevice, queue));
 
   // Part 3 of 5: device to device memory copy
-  CUDA_CHECK(cudaMemcpyAsync(___));
+  CUDA_CHECK(cudaMemcpyAsync(d_b, d_a, memSize, cudaMemcpyDeviceToDevice, queue));
 
   // Clear the host memory
   std::fill(h_a.begin(), h_a.end(), 0);
 
   // Part 4 of 5: device to host copy
-  CUDA_CHECK(cudaMemcpyAsync(___));
+  CUDA_CHECK(cudaMemcpyAsync(h_a.data(), d_b, memSize, cudaMemcpyDeviceToHost, queue));
 
   // Part 5 of 5: free the device memory
-  CUDA_CHECK(cudaFreeAsync(___));
-  CUDA_CHECK(cudaFreeAsync(___));
+  CUDA_CHECK(cudaFreeAsync(d_a, queue));
+  CUDA_CHECK(cudaFreeAsync(d_b, queue));
 
   // Wait for all asynchronous operations to complete
   CUDA_CHECK(cudaStreamSynchronize(queue));

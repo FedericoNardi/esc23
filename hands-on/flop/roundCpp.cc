@@ -14,7 +14,7 @@ History: Written by Tim Mattson, 09/2023.
 // enable access to control over the floating point environment.
 // It will be enabled until it is turned off or until we reach the
 // end of this translation unit.
-#pragma STDC FENV_ACCESS ON
+//#pragma STDC FENV_ACCESS ON
 
 int main()
 {
@@ -23,9 +23,10 @@ int main()
 
    // change rounding mode.  Options are FE_DOWNWARD, FE_TOWARDZERO,
    // FE_UPWARD, FE_TONEAREST
-   std::fesetround(FE_DOWNWARD);
+   std::cout<<"--> TOWARDZERO\n";
+   std::fesetround(FE_TOWARDZERO);
 
-   int Count = 10000;
+   int Count = 100000;
 
    for(int i = 0; i<Count;i++){
      sum += dt;

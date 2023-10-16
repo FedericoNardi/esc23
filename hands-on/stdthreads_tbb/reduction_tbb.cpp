@@ -40,7 +40,6 @@ int main()
       }
   ); 
 
-
   auto stop = std::chrono::steady_clock::now(); // Get the stop time
 
   std::chrono::duration<double> dur = stop - start; // Calculate the duration

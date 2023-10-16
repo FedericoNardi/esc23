@@ -10,18 +10,19 @@
 #include "cuda_check.h"
 
 // Here you can set the device ID that was assigned to you
-#define MYDEVICE 0
+#define MYDEVICE 2
 
 // Part 3 of 5: implement the kernel
-__global__ void myFirstKernel(___)
+__global__ void myFirstKernel(int *d_a)
 {
-  ___
+  auto idx = threadIdx.x + blockIdx.x * blockDim.x;
+  d_a[idx] = idx + 42;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Program main
 ////////////////////////////////////////////////////////////////////////////////
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   CUDA_CHECK(cudaSetDevice(MYDEVICE));
 
@@ -30,30 +31,30 @@ int main(int argc, char** argv)
   CUDA_CHECK(cudaStreamCreate(&queue));
 
   // Your problem's size
-  int N = 64;
+  int N = 128;
 
   // Define the grid and block size
   int numThreadsPerBlock = 8;
-  int numBlocks          = N / numThreadsPerBlock;
+  int numBlocks = N / numThreadsPerBlock;
 
   // Allocate and initialize host memory
   // hint: the vector is empty, you might want to allocate some memory ...
-  std::vector<int> h_a;
+  std::vector<int> h_a(N);
 
   // Pointer for the device memory
-  int* d_a;
+  int *d_a;
 
   // Part 1 of 5: allocate the device memory
   size_t memSize = N * sizeof(int);
-  CUDA_CHECK(cudaMallocAsync(___));
+  CUDA_CHECK(cudaMallocAsync(&d_a, memSize, queue));
 
   // Part 2 of 5: configure and launch kernel
-  myFirstKernel<<<___, ___, 0, queue>>>(___);
-  //Check for any errors that occurred during kernel launch
+  myFirstKernel<<<numBlocks, numThreadsPerBlock, 0, queue>>>(d_a);
+  // Check for any errors that occurred during kernel launch
   CUDA_CHECK(cudaGetLastError());
 
   // Part 4 of 5: copy data from device to host asynchronously
-  CUDA_CHECK(cudaMemcpyAsync(___));
+  CUDA_CHECK(cudaMemcpyAsync(h_a.data(), d_a, memSize, cudaMemcpyDeviceToHost, queue));
 
   // Free the device memory
   CUDA_CHECK(cudaFreeAsync(d_a, queue));
@@ -62,7 +63,8 @@ int main(int argc, char** argv)
   CUDA_CHECK(cudaStreamSynchronize(queue));
 
   // Part 5 of 5: verify that the data returned to the host is correct
-  for (int i = 0; i < N; ++i) {
+  for (int i = 0; i < N; ++i)
+  {
     assert(h_a[i] == i + 42);
   }
 
@@ -72,5 +74,4 @@ int main(int argc, char** argv)
   // If the program makes it this far, then the results are correct and
   // there are no run-time errors.  Good work!
   std::cout << "Correct, good work!" << std::endl;
-
 }

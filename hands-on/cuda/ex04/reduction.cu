@@ -11,11 +11,11 @@
 #include "cuda_check.h"
 
 // Here you can set the device ID that was assigned to you
-#define MYDEVICE 0
+#define MYDEVICE 2
 
 // Part 4 of 8: implement the kernel
-__global__ void block_sum(const int* input,
-                          int* per_block_results,
+__global__ void block_sum(const int *input,
+                          int *per_block_results,
                           const size_t n)
 {
   // fill me
@@ -27,14 +27,15 @@ __global__ void block_sum(const int* input,
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
-  std::random_device rd; // Will be used to obtain a seed for the random engine
+  std::random_device rd;  // Will be used to obtain a seed for the random engine
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
   std::uniform_int_distribution<> distrib(-10, 10);
   // Create array of 256ki elements
   const int num_elements = 1 << 18;
   // Generate random input on the host
   std::vector<int> h_input(num_elements);
-  for (auto& elt : h_input) {
+  for (auto &elt : h_input)
+  {
     elt = distrib(gen);
   }
 
@@ -42,13 +43,19 @@ int main(void)
   std::cerr << "Host sum: " << host_result << std::endl;
 
   // Part 1 of 8: choose a device and create a CUDA stream
+  cudaSetDevice(MYDEVICE);
+  cudaStream_t queue;
+  cudaStreamCreate(&queue);
 
   // Part 2 of 8: copy the input data to device memory
-  int* d_input;
+  int *d_input;
+  cudaMalloc(&d_input, num_elements * sizeof(int), queue);
+  cudaMemcpyAsync(d_input, h_input.data(), num_elements * sizeof(int),
+                  cudaMemcpyHostToDevice, queue);
 
   // Part 3 of 8: allocate memory for the partial sums
   // How much space does it need?
-  int* d_partial_sums_and_total;
+  int *d_partial_sums_and_total;
 
   // Part 5 of 8: launch one kernel to compute, per-block, a partial sum.
   // How much shared memory does it need?

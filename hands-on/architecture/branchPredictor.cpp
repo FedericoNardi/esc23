@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <chrono>
 
 
 int main()
@@ -26,6 +27,8 @@ int main()
 
   long long sum = 0;
 
+  auto start = std::chrono::high_resolution_clock::now();
+
   for (unsigned i = 0; i < 10000; ++i) {
     sum = 0;
     for (unsigned c = 0; c < arraySize; ++c) {
@@ -35,7 +38,14 @@ int main()
     
   }
 
+  auto const end = std::chrono::high_resolution_clock::now();
+
+
   std::cout <<"sum " << sum <<  " sorted: " << (sorted? "yes" : "no") << std::endl;
+
+  auto const time = end-start;
+  auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(time).count();
+  std::cout <<"Time elapsed: "<<duration<<"s\n";
 
   return 0;
 }

@@ -4,7 +4,9 @@
 #include <utility>
 #include <cstdlib>
 
-using Duration = std::chrono::duration<float>;
+using Duration = std::chrono::duration<float>; // former type def: Duration is the type equal to std::chrono::duration<float>
+                                               // typedef(chrono::duration<float>, Duration)
+                                               // 'using' can be used with templates
 
 std::pair<double, Duration> pi(int n)
 {
@@ -28,7 +30,7 @@ int main(int argc, char* argv[])
 {
   int const n = (argc > 1) ? std::atoi(argv[1]) : 10;
 
-  auto const [value, time] = pi(n);
+  auto const [value, time] = pi(n); //Structure-binding -> unpacks
 
   std::cout << "pi = " << value
             << " for " << n << " iterations"

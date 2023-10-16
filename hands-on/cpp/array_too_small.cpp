@@ -15,5 +15,6 @@ int main(int argc, char* argv[])
 
 void init(std::vector<int>& v, int N)
 {
+  v.reserve(50);
   std::iota(v.begin(), std::next(v.begin(), N), 0);
 }

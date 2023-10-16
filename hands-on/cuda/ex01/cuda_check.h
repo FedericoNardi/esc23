@@ -6,10 +6,12 @@
 #include <sstream>
 #include <stdexcept>
 
+// USE DEVICE 2
 // CUDA headers
 #include <cuda_runtime.h>
 
-inline void cuda_check(const char* file, int line, const char* cmd, cudaError_t result) {
+inline void cuda_check(const char *file, int line, const char *cmd, cudaError_t result)
+{
   if (__builtin_expect(result == cudaSuccess, true))
     return;
 
@@ -23,4 +25,4 @@ inline void cuda_check(const char* file, int line, const char* cmd, cudaError_t 
 
 #define CUDA_CHECK(ARG) (cuda_check(__FILE__, __LINE__, #ARG, (ARG)))
 
-#endif  // cuda_check_h
+#endif // cuda_check_h
